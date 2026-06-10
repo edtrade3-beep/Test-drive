@@ -1,9 +1,10 @@
-Dixie Motors Test Drive Agreement - Front DL Guided Scan v3
+Dixie Motors Test Drive Agreement - Barcode Version
 
-Vercel settings:
+Deploy to Vercel:
+Framework Preset: Other / leave default
 Install Command: npm install
 Build Command: npm run build
 Output Directory: dist
-Framework: leave default / Other in the UI only
 
-This version avoids bad front-DL OCR. It uses camera/photo capture, zoom crop panels, manual fast-fill fields, signature, print/PDF, and bottom copy.
+Use on phone/iPad from the Vercel HTTPS URL.
+Scan the BACK of the driver license barcode/PDF417 for best accuracy.
