@@ -1,9 +1,9 @@
-Test Drive Agreement - Front DL Scan Safe Version
+Dixie Motors Test Drive Agreement - Front DL Guided Scan v3
 
 Vercel settings:
-Framework Preset: Other / leave default
 Install Command: npm install
 Build Command: npm run build
 Output Directory: dist
+Framework: leave default / Other in the UI only
 
-Do not set framework to "other" inside vercel.json. Vercel does not accept that value.
+This version avoids bad front-DL OCR. It uses camera/photo capture, zoom crop panels, manual fast-fill fields, signature, print/PDF, and bottom copy.
