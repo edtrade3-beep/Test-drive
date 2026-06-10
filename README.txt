@@ -1,18 +1,20 @@
-Test Drive Agreement App
+TEST DRIVE AGREEMENT APP - VERCEL READY
 
-Open index.html in Chrome/Safari/Edge.
+How to deploy:
+1. Upload this whole folder to GitHub, or drag this folder into Vercel.
+2. Vercel settings:
+   Framework: Other / Vite
+   Install Command: npm install
+   Build Command: npm run build
+   Output Directory: dist
+3. Open the Vercel https link on iPhone/iPad.
+4. Tap Add to Home Screen for app-style use.
 
-Features:
-- Phone/iPad camera upload for driver's license image
-- OCR scan using Tesseract.js CDN
-- Auto-fill customer name, address, license number, issuing state, expiration date when OCR reads the license clearly
-- Manual phone number entry
-- Vehicle/VIN/insurance fields
-- Digital signature pad
-- Print / Save PDF button
-- Bottom copy summary section
+How to use:
+- Best scan: take photo of the BACK of the driver's license barcode first.
+- If barcode scan is not supported on that phone, use OCR photo scan.
+- Always review fields before customer signs and before printing.
 
-Important:
-- Review every field after OCR before printing/signing.
-- OCR needs internet the first time because it loads Tesseract.js from CDN.
-- For production dealership use, host this over HTTPS so phone cameras and clipboard work reliably.
+Notes:
+- Camera requires HTTPS. Vercel provides HTTPS automatically.
+- OCR needs internet because it loads Tesseract from CDN.

@@ -1,0 +1,14 @@
+{
+  "name": "test-drive-agreement-app",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "start": "vite --host 0.0.0.0",
+    "build": "mkdir -p dist && cp index.html dist/index.html",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "latest"
+  }
+}
