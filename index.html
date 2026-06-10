@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test Drive Agreement App</title>
+  <style>
+    :root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#667085;--blue:#1455d9;--green:#0a8f5a;--red:#b42318;--border:#d0d5dd;--soft:#eef4ff}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+    header{position:sticky;top:0;z-index:10;background:#0b1f4d;color:#fff;padding:14px 18px;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+    header h1{font-size:18px;margin:0} header p{font-size:12px;margin:4px 0 0;color:#c7d7ff}
+    main{max-width:1180px;margin:18px auto;padding:0 14px;display:grid;grid-template-columns:390px 1fr;gap:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 1px 4px rgba(16,24,40,.06);padding:14px}
+    .card h2{font-size:16px;margin:0 0 10px}.card h3{font-size:14px;margin:16px 0 8px;color:#344054;border-bottom:1px solid #eee;padding-bottom:5px}
+    label{display:block;font-size:12px;font-weight:700;margin:8px 0 4px;color:#344054} input,textarea,select{width:100%;border:1px solid var(--border);border-radius:9px;padding:9px 10px;font-size:14px;background:#fff;color:var(--ink)} textarea{min-height:64px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    button{border:0;border-radius:10px;padding:10px 12px;font-weight:800;cursor:pointer;font-size:13px}.primary{background:var(--blue);color:#fff}.green{background:var(--green);color:#fff}.ghost{background:#eef2f7;color:#182230}.danger{background:var(--red);color:#fff}.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .notice{background:#fff8e6;border:1px solid #fedf89;border-radius:10px;padding:10px;font-size:12px;color:#7a4b00;margin:10px 0}.ok{background:#ecfdf3;border-color:#abefc6;color:#067647}.small{font-size:12px;color:var(--muted)}
+    video,canvas.preview{width:100%;border-radius:12px;background:#111;border:1px solid var(--border)}
+    .ocrbox{font-size:11px;white-space:pre-wrap;max-height:160px;overflow:auto;background:#0b1220;color:#e6edf7;border-radius:10px;padding:10px;margin-top:8px}
+    #agreement{background:#fff;padding:34px 44px;border-radius:8px;border:1px solid var(--border);min-height:980px;font-family:Arial,Helvetica,sans-serif;color:#111}.agreement-title{text-align:center;font-weight:800;font-size:18px;margin-bottom:18px}.linegrid{display:grid;gap:8px;font-size:13px}.line{border-bottom:1px solid #111;display:inline-block;min-height:18px;padding:0 4px;font-weight:700}.flexline{display:flex;gap:8px;align-items:end}.flexline span.labeltxt{white-space:nowrap}.terms{font-size:12px;line-height:1.35;margin-top:14px}.terms ol{padding-left:18px}.terms li{margin-bottom:9px}.comments{border-bottom:1px solid #111;min-height:24px;font-weight:700}.sigrow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}.sigline{border-top:1px solid #111;padding-top:5px;font-size:12px;display:flex;justify-content:space-between;gap:8px}.signature-img{max-width:100%;height:54px;object-fit:contain;display:block;margin-bottom:4px}.copy{margin-top:16px;background:var(--soft);border:1px solid #b2ccff;border-radius:12px;padding:12px;font-size:13px}.copy pre{white-space:pre-wrap;font-family:Arial,Helvetica,sans-serif;margin:0;line-height:1.35}
+    #sigPad{touch-action:none;border:1px solid var(--border);border-radius:10px;background:white;width:100%;height:150px}
+    @media(max-width:900px){main{grid-template-columns:1fr} #agreement{padding:22px 18px;font-size:12px}.row,.row3{grid-template-columns:1fr}.sigrow{grid-template-columns:1fr}}
+    @media print{body{background:white}header,.controls,.leftpanel,.no-print{display:none!important}main{display:block;max-width:none;margin:0;padding:0}.card{border:0;box-shadow:none;padding:0}#agreement{border:0;border-radius:0;padding:0;min-height:auto}.copy{page-break-inside:avoid}.agreement-title{margin-top:0}}
+  </style>
+</head>
+<body>
+<header><h1>Test Drive Agreement — Dixie Motors</h1><p>Scan driver's license, auto-fill form, add phone, sign, print, and copy summary.</p></header>
+<main>
+  <section class="card leftpanel">
+    <h2>1) Scan Driver License</h2>
+    <div class="notice">Works on phone/iPad with camera. For best results: flat license, good light, no glare.</div>
+    <input id="dlImage" type="file" accept="image/*" capture="environment" />
+    <div class="btnrow"><button class="primary" id="runOcr">Scan / Fill From Photo</button><button class="ghost" id="clearOcr">Clear OCR</button></div>
+    <div class="small" id="ocrStatus">OCR not started.</div>
+    <div class="ocrbox" id="ocrText"></div>
+
+    <h2 style="margin-top:18px">2) Agreement Fields</h2>
+    <div class="row"><div><label>Dealership Name</label><input id="dealership" value="Dixie Motors"></div><div><label>Salesperson</label><input id="salesperson"></div></div>
+    <label>Customer Name(s)</label><input id="customerName">
+    <label>Street Address</label><input id="streetAddress">
+    <div class="row"><div><label>Home / Cell Telephone</label><input id="homePhone" inputmode="tel" placeholder="513-___-____"></div><div><label>Work Telephone</label><input id="workPhone" inputmode="tel"></div></div>
+    <div class="row3"><div><label>Driver's License #</label><input id="licenseNumber"></div><div><label>Issuing State</label><input id="issuingState" maxlength="2"></div><div><label>Expiration Date</label><input id="expirationDate" placeholder="MM/DD/YYYY"></div></div>
+    <div class="row3"><div><label>Date of Birth</label><input id="dob" placeholder="MM/DD/YYYY"></div><div><label>License Class</label><input id="licenseClass"></div><div><label>Customer Phone to Print</label><input id="printPhone" inputmode="tel" placeholder="Phone shown in copy"></div></div>
+    <h3>Insurance</h3>
+    <label>Insurance Company</label><input id="insuranceCompany">
+    <div class="row"><div><label>Agent</label><input id="insuranceAgent"></div><div><label>Telephone</label><input id="insurancePhone" inputmode="tel"></div></div>
+    <h3>Vehicle</h3>
+    <div class="row3"><div><label>Vehicle Year</label><input id="vehicleYear"></div><div><label>Make</label><input id="vehicleMake"></div><div><label>Model</label><input id="vehicleModel"></div></div>
+    <label>VIN</label><input id="vin" maxlength="17">
+    <div class="row3"><div><label>Miles Allowed</label><input id="milesAllowed" value="10"></div><div><label>Return By</label><input id="returnBy" placeholder="4:00 p.m."></div><div><label>Odometer Out</label><input id="odometerOut"></div></div>
+    <div class="row"><div><label>Date Out</label><input id="dateOut"></div><div><label>Time Out</label><input id="timeOut"></div></div>
+    <label>Comments</label><textarea id="comments"></textarea>
+    <h3>Office Use</h3>
+    <div class="row"><div><label>Checked In By</label><input id="checkedInBy"></div><div><label>On</label><input id="checkedInOn"></div></div>
+    <div class="row"><div><label>At</label><input id="checkedInAt"></div><div><label>Odometer Reading</label><input id="odometerIn"></div></div>
+    <label>Return Comments</label><input id="returnComments">
+
+    <h2 style="margin-top:18px">3) Signature</h2>
+    <canvas id="sigPad"></canvas>
+    <div class="btnrow"><button class="ghost" id="clearSig">Clear Signature</button></div>
+    <div class="btnrow controls"><button class="green" onclick="window.print()">Print / Save PDF</button><button class="primary" id="copySummaryBtn">Copy Bottom Text</button><button class="danger" id="clearForm">Clear Form</button></div>
+  </section>
+
+  <section class="card">
+    <div id="agreement">
+      <div class="agreement-title">TEST DRIVE AGREEMENT</div>
+      <div class="linegrid">
+        <div class="flexline"><span class="labeltxt">Dealership Name:</span><span class="line" data-bind="dealership" style="flex:1"></span><span class="labeltxt">Salesperson:</span><span class="line" data-bind="salesperson" style="flex:1"></span></div>
+        <div class="flexline"><span class="labeltxt">Customer Name(s):</span><span class="line" data-bind="customerName" style="flex:1"></span></div>
+        <div class="flexline"><span class="labeltxt">Street Address:</span><span class="line" data-bind="streetAddress" style="flex:1"></span></div>
+        <div class="flexline"><span class="labeltxt">Home Telephone:</span><span class="line" data-bind="homePhone" style="flex:1"></span><span class="labeltxt">Work Telephone:</span><span class="line" data-bind="workPhone" style="flex:1"></span></div>
+        <div class="flexline"><span class="labeltxt">Driver's License #:</span><span class="line" data-bind="licenseNumber" style="flex:1"></span><span class="labeltxt">Issuing State:</span><span class="line" data-bind="issuingState" style="width:90px"></span><span class="labeltxt">Expiration Date:</span><span class="line" data-bind="expirationDate" style="width:150px"></span></div>
+        <div class="flexline"><span class="labeltxt">Insurance Company:</span><span class="line" data-bind="insuranceCompany" style="flex:1"></span><span class="labeltxt">Agent:</span><span class="line" data-bind="insuranceAgent" style="flex:1"></span><span class="labeltxt">Telephone:</span><span class="line" data-bind="insurancePhone" style="flex:1"></span></div>
+        <div class="flexline"><span class="labeltxt">Vehicle Year:</span><span class="line" data-bind="vehicleYear" style="width:90px"></span><span class="labeltxt">Make:</span><span class="line" data-bind="vehicleMake" style="flex:1"></span><span class="labeltxt">Model:</span><span class="line" data-bind="vehicleModel" style="flex:1"></span><span class="labeltxt">VIN:</span><span class="line" data-bind="vin" style="flex:1.5"></span></div>
+      </div>
+      <div class="terms">
+        <p>I have requested that the Dealership permit me to test drive the above-described vehicle. I understand that the Dealership is permitting me to test drive the vehicle subject to the following terms and conditions:</p>
+        <ol>
+          <li>I have a valid driver's license to operate a motor vehicle in this state and I presently have in effect collision and liability insurance that meets or exceeds the minimum state requirements and applies to the vehicle during the time that it is in my possession or under my control.</li>
+          <li>I cannot drive the vehicle more than <span class="line" data-bind="milesAllowed" style="width:70px"></span> miles and must return the vehicle to the Dealership by <span class="line" data-bind="returnBy" style="width:120px"></span>, or earlier if demanded by the Dealership, in the same condition as I received it. I cannot remove the vehicle from this state or use the vehicle negligently or contrary to law.</li>
+          <li>I must immediately report any damage, accident, theft or vandalism involving the vehicle to the police, the Dealership and my insurance company and deliver to the Dealership all notices, pleadings and documents regarding any claim, suit or proceeding related to my use, possession or control of the vehicle.</li>
+          <li>I have personally inspected the vehicle and found it free from any visible damage and/or defects, except as otherwise noted in the comments below. I must pay for any loss or damage to the vehicle that occurs while the vehicle is in my possession or control, plus the Dealership's related expenses.</li>
+          <li>If I breach this Agreement or fail to return the vehicle as required, I will be required to pay all expenses incurred by the Dealership to have the vehicle returned and the Dealership or its agents/employees may peacefully retake possession of the vehicle.</li>
+        </ol>
+      </div>
+      <div class="flexline"><span class="labeltxt">COMMENTS:</span><span class="comments" data-bind="comments" style="flex:1"></span></div>
+      <div style="height:22px"></div>
+      <div class="flexline"><span class="labeltxt">DATE OUT:</span><span class="line" data-bind="dateOut" style="width:130px"></span><span class="labeltxt">TIME OUT:</span><span class="line" data-bind="timeOut" style="width:130px"></span><span class="labeltxt">a.m./p.m. ODOMETER READING OUT:</span><span class="line" data-bind="odometerOut" style="flex:1"></span></div>
+      <p class="terms">By signing below, I acknowledge that the vehicle is the property of the Dealership and this Agreement is solely for the purpose of allowing me to use the vehicle as permitted by the terms and conditions stated herein.</p>
+      <div class="sigrow">
+        <div><img id="sigImg" class="signature-img" alt=""><div class="sigline"><span>Customer</span><span>Date: <b data-bind="dateOut"></b></span></div></div>
+        <div><div style="height:58px"></div><div class="sigline"><span>Authorized Dealership Representative</span><span>Date</span></div></div>
+      </div>
+      <div class="terms" style="margin-top:20px;font-weight:700">For Office Use Only:</div>
+      <div class="flexline terms"><span class="labeltxt">Checked In By:</span><span class="line" data-bind="checkedInBy" style="flex:1"></span><span class="labeltxt">On:</span><span class="line" data-bind="checkedInOn" style="width:150px"></span><span class="labeltxt">At:</span><span class="line" data-bind="checkedInAt" style="width:120px"></span><span>a.m./p.m.</span></div>
+      <div class="flexline terms"><span class="labeltxt">Odometer Reading:</span><span class="line" data-bind="odometerIn" style="flex:1"></span><span class="labeltxt">Comments:</span><span class="line" data-bind="returnComments" style="flex:1.5"></span></div>
+      <div class="copy">
+        <b>Bottom Copy / Customer Summary</b>
+        <pre id="bottomCopy"></pre>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script>
+const ids = ['dealership','salesperson','customerName','streetAddress','homePhone','workPhone','licenseNumber','issuingState','expirationDate','dob','licenseClass','printPhone','insuranceCompany','insuranceAgent','insurancePhone','vehicleYear','vehicleMake','vehicleModel','vin','milesAllowed','returnBy','odometerOut','dateOut','timeOut','comments','checkedInBy','checkedInOn','checkedInAt','odometerIn','returnComments'];
+const $ = id => document.getElementById(id);
+function today(){const d=new Date();return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`}
+function nowTime(){const d=new Date();let h=d.getHours();const ap=h>=12?'p.m.':'a.m.';h=h%12||12;return `${h}:${String(d.getMinutes()).padStart(2,'0')} ${ap}`}
+$('dateOut').value=today(); $('timeOut').value=nowTime();
+function updateAgreement(){
+  ids.forEach(id=>document.querySelectorAll(`[data-bind="${id}"]`).forEach(el=>{el.textContent=$(id).value||'';}));
+  const phone = $('printPhone').value || $('homePhone').value;
+  const vehicle = [$('vehicleYear').value,$('vehicleMake').value,$('vehicleModel').value].filter(Boolean).join(' ');
+  $('bottomCopy').textContent = `TEST DRIVE COPY\nCustomer: ${$('customerName').value}\nPhone: ${phone}\nDL#: ${$('licenseNumber').value}  State: ${$('issuingState').value}  Exp: ${$('expirationDate').value}\nVehicle: ${vehicle}\nVIN: ${$('vin').value}\nDate/Time Out: ${$('dateOut').value} ${$('timeOut').value}\nOdometer Out: ${$('odometerOut').value}\nReturn By: ${$('returnBy').value}\nStop/Invalid: customer must return vehicle as agreed and keep insurance active.\nComments: ${$('comments').value}`;
+  saveLocal();
+}
+ids.forEach(id=>$(id).addEventListener('input', updateAgreement));
+function saveLocal(){const data={};ids.forEach(id=>data[id]=$(id).value);localStorage.setItem('tdAgreement',JSON.stringify(data));}
+function loadLocal(){try{const data=JSON.parse(localStorage.getItem('tdAgreement')||'{}');ids.forEach(id=>{if(data[id]!==undefined)$(id).value=data[id]});}catch(e){} updateAgreement();}
+loadLocal();
+$('clearForm').onclick=()=>{if(confirm('Clear all fields?')){ids.forEach(id=>$(id).value='');$('dealership').value='Dixie Motors';$('dateOut').value=today();$('timeOut').value=nowTime();localStorage.removeItem('tdAgreement');clearSig();updateAgreement();}};
+$('copySummaryBtn').onclick=async()=>{await navigator.clipboard.writeText($('bottomCopy').textContent);alert('Bottom copy copied.');};
+function parseDL(text){
+  const t=text.replace(/\r/g,'').split('\n').map(s=>s.trim()).filter(Boolean); const all=t.join('\n');
+  const get=(patterns)=>{for(const p of patterns){const m=all.match(p);if(m)return (m[1]||'').trim()}return ''}
+  let lic=get([/(?:DAQ|DLN|LIC|LICENSE|DL)[:\s#-]*([A-Z0-9]{5,18})/i]);
+  let exp=get([/(?:DBA|EXP|EXPIRATION|EXPIRES)[:\s-]*(\d{2}[\/\-]?\d{2}[\/\-]?\d{4}|\d{8})/i]);
+  let dob=get([/(?:DBB|DOB|BIRTH)[:\s-]*(\d{2}[\/\-]?\d{2}[\/\-]?\d{4}|\d{8})/i]);
+  let first=get([/(?:DAC|FN|FIRST)[:\s-]*([A-Z][A-Z\s'-]{1,40})/i]);
+  let last=get([/(?:DCS|LN|LAST)[:\s-]*([A-Z][A-Z\s'-]{1,40})/i]);
+  let street=get([/(?:DAG|ADDRESS)[:\s-]*([^\n]+)/i]);
+  let city=get([/(?:DAI|CITY)[:\s-]*([^\n]+)/i]);
+  let state=get([/(?:DAJ|STATE)[:\s-]*([A-Z]{2})/i]);
+  let zip=get([/(?:DAK|ZIP)[:\s-]*(\d{5})/i]);
+  function fmtDate(v){v=(v||'').replace(/[^0-9]/g,''); if(v.length===8)return `${v.slice(0,2)}/${v.slice(2,4)}/${v.slice(4)}`; return v;}
+  if(first||last) $('customerName').value = `${first} ${last}`.trim();
+  if(street) $('streetAddress').value = [street, city, state, zip].filter(Boolean).join(', ');
+  if(lic) $('licenseNumber').value = lic;
+  if(state) $('issuingState').value = state;
+  if(exp) $('expirationDate').value = fmtDate(exp);
+  if(dob) $('dob').value = fmtDate(dob);
+  updateAgreement();
+}
+$('runOcr').onclick=async()=>{
+  const file=$('dlImage').files[0]; if(!file){alert('Choose or take a driver license photo first.');return;}
+  if(!window.Tesseract){alert('OCR library did not load. Internet is needed the first time.');return;}
+  $('ocrStatus').textContent='Scanning... please wait.';
+  try{const res=await Tesseract.recognize(file,'eng',{logger:m=>{$('ocrStatus').textContent=`OCR: ${m.status} ${Math.round((m.progress||0)*100)}%`;}});$('ocrText').textContent=res.data.text;parseDL(res.data.text);$('ocrStatus').textContent='Scan complete. Review fields before printing.';}catch(e){$('ocrStatus').textContent='OCR failed. Type fields manually.';console.error(e)}
+};
+$('clearOcr').onclick=()=>{$('ocrText').textContent='';$('ocrStatus').textContent='OCR cleared.';};
+// signature pad
+const canvas=$('sigPad'), ctx=canvas.getContext('2d'); let drawing=false;
+function resizeSig(){const r=canvas.getBoundingClientRect();const data=canvas.toDataURL();canvas.width=r.width*devicePixelRatio;canvas.height=r.height*devicePixelRatio;ctx.scale(devicePixelRatio,devicePixelRatio);ctx.lineWidth=2;ctx.lineCap='round';const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,r.width,r.height);img.src=data;}
+setTimeout(resizeSig,100); window.addEventListener('resize',resizeSig);
+function pos(e){const r=canvas.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return{x:p.clientX-r.left,y:p.clientY-r.top}}
+function start(e){drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault()}
+function move(e){if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();$('sigImg').src=canvas.toDataURL();e.preventDefault()}
+function end(){drawing=false;$('sigImg').src=canvas.toDataURL()}
+canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);canvas.addEventListener('mouseup',end);canvas.addEventListener('mouseleave',end);canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',end);
+function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);$('sigImg').src=''} $('clearSig').onclick=clearSig;
+</script>
+</body>
+</html>
